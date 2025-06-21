@@ -12,3 +12,17 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
+
+resilience4j:
+  retry:
+    instances:
+      myRetry:
+        max-attempts: 3
+        wait-duration: 2s
+  circuitbreaker:
+    instances:
+      myCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s

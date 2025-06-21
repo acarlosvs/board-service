@@ -7,5 +7,6 @@ import java.util.List;
 public interface SwimlaneService {
     List<Swimlane> getAll();
     Swimlane getById(Long id);
+    List<Swimlane> getByBoardId(Long id);
     Swimlane save(Swimlane swimlane);
 }
