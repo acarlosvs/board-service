@@ -5,7 +5,7 @@ pipeline {
     IMAGE_NAME = 'board-service/app'
     TAG = 'latest'
     SONAR_URL = 'http://localhost:9002'
-    SONAR_TOKEN = credentials('sqp_5e6ab5163a76373ee6cdf380632c469179072b02')
+    SONAR_TOKEN = 'sqp_5e6ab5163a76373ee6cdf380632c469179072b02'
   }
 
   stages {
