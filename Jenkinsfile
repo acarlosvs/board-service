@@ -8,6 +8,10 @@ pipeline {
     SONAR_TOKEN = 'sqp_5e6ab5163a76373ee6cdf380632c469179072b02'
   }
 
+  tools {
+    maven 'Maven 3.9.6' // nome cadastrado em Global Tool Configuration
+  }
+
   stages {
     stage('Checkout') {
       steps {
@@ -17,7 +21,9 @@ pipeline {
 
     stage('Build & Test') {
       steps {
-        sh 'mvn clean verify'
+        withMaven(maven: 'Maven 3.9.6') {
+          sh 'mvn clean verify'
+        }
       }
     }
 
