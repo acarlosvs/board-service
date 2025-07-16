@@ -1,4 +1,4 @@
-package br.com.tasknow.boardservice.application.web.controllers.dto;
+package br.com.tasknow.boardservice.application.web.dto;
 
 import lombok.Builder;
 

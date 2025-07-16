@@ -18,5 +18,4 @@ public class Board {
     @Id
     private Long id;
     private String name;
-    private List<Swimlane> swimlanes;
 }

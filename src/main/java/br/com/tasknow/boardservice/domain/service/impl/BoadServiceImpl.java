@@ -1,6 +1,6 @@
 package br.com.tasknow.boardservice.domain.service.impl;
 
-import br.com.tasknow.boardservice.application.web.controllers.dto.NotificationDTO;
+import br.com.tasknow.boardservice.application.web.dto.NotificationDTO;
 import br.com.tasknow.boardservice.domain.entities.Board;
 import br.com.tasknow.boardservice.domain.repository.BoardRepository;
 import br.com.tasknow.boardservice.domain.service.BoardService;
@@ -8,6 +8,9 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,17 +27,21 @@ public class BoadServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
 
     @Override
+    @Cacheable(value = "cache:boards")
     public List<Board> getAll() {
         return (List<Board>) boardRepository.findAll();
     }
 
     @Override
+    @Cacheable(value = "cache:board", key = "#id")
     public Board getById(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Quadro não encontrado."));
     }
 
     @Override
+    @CacheEvict(value = "cache:boards", allEntries = true) // limpa cache da lista
+    @CachePut(value = "cache:board", key = "#board.id")    // atualiza o cache do board individual
     @Retry(name = "retrySaveBoard", fallbackMethod = "fallbackMethod")
     @CircuitBreaker(name = "circuitBreakerSaveBoard", fallbackMethod = "fallbackMethod")
     public Board save(Board board) {
@@ -56,7 +63,7 @@ public class BoadServiceImpl implements BoardService {
         return board;
     }
 
-    private void fallback(Exception ex) {
-        log.error("Resposta alternativa (fallback): " + ex.getMessage());
+    private void fallbackMethod(Exception ex) {
+        log.error("Resposta alternativa (fallback): {}", ex.getMessage());
     }
 }
